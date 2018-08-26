@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <sys/wait.h>
 #include <syscall.h>
 #include <unistd.h>
 #define catch if (errno != 0){ \
@@ -64,7 +65,23 @@ void prompt() {
   print(prompt_text);
 }
 
-int main() {
-  prompt();
+int main(int argc, char *argv[], char * envp[]) {
+  int run = 0;
+  char cmd[131072]; //128KB Buffer for reading in commands
+  while(run == 0)
+  {
+    prompt();
+    ssize_t length = read(0, cmd, 131072);
+    cmd[length-1] = '\0';
+    int pid = fork();
+    if(pid == 0)
+    {
+      return 0;
+    }
+    else
+    {
+      wait(&pid);
+    }
+  }
   return 0;
 }
