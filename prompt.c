@@ -19,7 +19,7 @@
 
 #define print(x) write(1, x, strlen(x))
 #define MAX_READ 1000000
-#define WHITESPACE " \t\r\a\n\0"
+#define WHITESPACE " \t\r\a\n"
 char home[4096];
 char *arg[32767];
 char argcount;
@@ -50,6 +50,13 @@ void get_user(int uid, char *uname) {
   return;
 }
 
+void free_args() {
+  for (int i = 0; i < argcount; ++i) {
+    free(arg[i]);
+    arg[i] = NULL;
+  }
+}
+
 void prompt() {
   char path[4096];
   char prompt_text[16384];
@@ -72,6 +79,7 @@ void prompt() {
 
 void read_cmd() {
   char buffer[131072];
+  memset(buffer, 0, 131072);
   int i = 0;
   while ((buffer[i] = fgetc(stdin)) != EOF) {
     if (buffer[i] == '\n' && buffer[i - 1] != '\\')
@@ -205,7 +213,8 @@ void ls() {
         ctime_r(&details.st_mtime, time);
         int length = strlen(time);
         int i;
-        for (i = 0; time[i] != '\n'; ++i);
+        for (i = 0; time[i] != '\n'; ++i)
+          ;
         time[i] = '\0';
         printf("%c%c%c%c%c%c%c%c%c %3lu %12s %12s %10ld %s %s\n",
                (perm[0][0] == 0) ? '-' : 'r', (perm[0][1] == 0) ? '-' : 'w',
@@ -214,8 +223,7 @@ void ls() {
                (perm[2][0] == 0) ? '-' : 'r', (perm[2][1] == 0) ? '-' : 'w',
                (perm[2][2] == 0) ? '-' : 'x', details.st_nlink, user, group,
                details.st_size, time, file->d_name);
-      }
-      else
+      } else
         printf("%s ", file->d_name);
     }
   }
@@ -224,9 +232,14 @@ void ls() {
   return;
 }
 
+void echo() {
+  for (int i = 1; i < argcount; ++i) printf("%s ", arg[i]);
+  printf("\n");
+  return;
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   int run = 0;
-  char cmd[131072];  // 128KB Buffer for reading in commands
   // Set the home variable
   getcwd(home, 4096);
   catch;
@@ -240,7 +253,10 @@ int main(int argc, char *argv[], char *envp[]) {
       ls();
     } else if (strncmp(arg[0], "pwd", 3) == 0) {
       pwd();
+    } else if (strncmp(arg[0], "echo", 4) == 0) {
+      echo();
     }
+    free_args();
     fflush(stdout);
   }
   return 0;
