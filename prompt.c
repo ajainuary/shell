@@ -12,17 +12,17 @@ int main(void) {
     if (argcount == 0) continue;
     if (strncmp(arg[0], "cd", 2) == 0) {
       cd();
-    } else if (strncmp(arg[0], "ls", 2) == 0) {
+    } else if (strcmp(arg[0], "ls\0") == 0) {
       ls();
-    } else if (strncmp(arg[0], "pwd", 3) == 0) {
+    } else if (strcmp(arg[0], "pwd\0") == 0) {
       pwd();
-    } else if (strncmp(arg[0], "echo", 4) == 0) {
+    } else if (strcmp(arg[0], "echo\0") == 0) {
       echo();
-    } else if (strncmp(arg[0], "pinfo", 5) == 0) {
+    } else if (strcmp(arg[0], "pinfo\0") == 0) {
       pinfo();
-    } else if (strncmp(arg[0], "remindme", 8) == 0) {
+    } else if (strcmp(arg[0], "remindme\0") == 0) {
       remindme();
-    } else if (strncmp(arg[0], "clock", 5) == 0) {
+    } else if (strcmp(arg[0], "clock\0") == 0) {
       clock_wrapper();
     } else {
       execute_cmd();

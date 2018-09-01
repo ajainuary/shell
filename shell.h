@@ -16,7 +16,7 @@
 
 #define catch if (errno != 0){write(1, "Error: ", 7); write( \
     1, strerror(errno), strlen(strerror(errno)));            \
-                              write(1, "\n", 1); errno = 0; }
+                              write(1, "\n", 1); errno = 0; return;}
 
 #define print(x) write(1, x, strlen(x))
 #define MAX_READ 1000000
