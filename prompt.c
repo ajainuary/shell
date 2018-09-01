@@ -11,11 +11,12 @@
 #include <sys/utsname.h>
 #include <sys/wait.h>
 #include <syscall.h>
+#define _XOPEN_SOURCE
 #include <time.h>
 #include <unistd.h>
-#define catch if (errno != 0){ \
-    write(1, "Error: ", 7);    \
-    write(1, strerror(errno), strlen(strerror(errno))); write(1, "\n", 1); }
+#define catch if (errno != 0){write(1, "Error: ", 7); write( \
+    1, strerror(errno), strlen(strerror(errno)));            \
+                              write(1, "\n", 1); errno = 0; }
 
 #define print(x) write(1, x, strlen(x))
 #define MAX_READ 1000000
@@ -101,6 +102,24 @@ void read_cmd() {
   return;
 }
 
+void expansion() {
+  for (int i = 0; i < argcount; ++i) {
+    if (arg[i][0] == '~') {
+      char *new = malloc((strlen(home) + strlen(arg[i]) + 3) * sizeof(char));
+      strcpy(new, home);
+      int len = strlen(home);
+      if (arg[i][1] != '/') {
+        new[len] = '/';
+        new[len + 1] = '\0';
+      }
+      strcat(new, arg[i] + 1);
+      free(arg[i]);
+      arg[i] = new;
+    }
+  }
+  return;
+}
+
 void execute_cmd() {
   int pid;
   pid = fork();
@@ -113,10 +132,29 @@ void execute_cmd() {
     arg[i] = NULL;
     bg = 1;
   }
-  if (pid == 0)
-    execvp(arg[0], arg);
-  else if (bg == 0)
+  if (pid == 0 && bg == 1) {
+    int monitor_id = fork();
+    if (monitor_id == 0) {
+      if (execvp(arg[0], arg) == -1) {
+        printf("Wrong Command\n");
+        return;
+      }
+    } else {
+      printf("%d running in background\n", monitor_id);
+      int tmp = monitor_id;
+      wait(NULL);
+      printf("\n%d completed successfully\n", tmp);
+      return;
+    }
+  } else if (pid == 0) {
+    if (execvp(arg[0], arg) == -1) {
+      printf("Wrong Command\n");
+      catch;
+      return;
+    }
+  } else if (bg == 0)
     wait(&pid);
+  if (bg == 1) sleep(1);
   return;
 }
 
@@ -184,6 +222,7 @@ void ls() {
   extern char *optarg;
   extern int optind;
   int c, flag_long = 0, flag_hidden = 0, flag_path = 0;
+  optind = 0;
   while ((c = getopt(argcount, arg, "al")) != -1) {
     switch (c) {
       case 'l':
@@ -294,6 +333,76 @@ void pinfo() {
   return;
 }
 
+void remindme() {
+  if (argcount < 3) {
+    printf("Invalid Usage\n");
+    return;
+  }
+  int time = atoi(arg[1]);
+  char msg[4096];
+  int t = 0;
+  for (int i = 2; i < argcount; ++i) {
+    for (int j = 0; arg[i][j] != '\0'; ++j)
+      if (arg[i][j] != '"') msg[t++] = arg[i][j];
+    msg[t++] = ' ';
+  }
+  msg[t] = '\0';
+  int pid = fork();
+  if (pid == 0) {
+    sleep(time);
+    printf("\nReminder : %s\n", msg);
+  }
+  return;
+}
+
+void clock_rtc() {
+  int rtc = open("/proc/driver/rtc", O_RDONLY);
+  char buffer[1024];
+  read(rtc, buffer, 1024);
+  strtok(buffer, ":");
+  char *time_gmt_tmp = strtok(NULL, "\n");
+  char time_gmt[256];
+  strcpy(time_gmt, time_gmt_tmp + 1);
+  strtok(NULL, ":");  // Cycle through label
+  char *date_gmt_tmp = strtok(NULL, "\n");
+  char date_gmt[256];
+  strcpy(date_gmt, date_gmt_tmp + 1);
+  char buffer_time[512];
+  strcpy(buffer_time, date_gmt);
+  int len = strlen(buffer_time);
+  buffer_time[len] = ' ';
+  buffer_time[len + 1] = '\0';
+  strcat(buffer_time, time_gmt);
+  printf("%s\n", buffer_time);
+  return;
+}
+
+void clock_wrapper() {
+  extern char *optarg;
+  extern int optind;
+  int c;
+  int time = 1, step = 1;
+  optind = 0;
+  while ((c = getopt(argcount, arg, "n:t:")) != -1) {
+    switch (c) {
+      case 'n':
+        time = atoi(optarg);
+        break;
+      case 't':
+        step = atoi(optarg);
+        break;
+      case '?':
+        printf("Invalid Flag\n");
+        break;
+    }
+  }
+  for (int i = 0; i < time; i += step) {
+    clock_rtc();
+    sleep(step);
+  }
+  return;
+}
+
 int main(int argc, char *argv[], char *envp[]) {
   int run = 0;
   // Set the home variable
@@ -302,6 +411,7 @@ int main(int argc, char *argv[], char *envp[]) {
   while (run == 0) {
     prompt();
     read_cmd();
+    expansion();
     if (argcount == 0) continue;
     if (strncmp(arg[0], "cd", 2) == 0) {
       cd();
@@ -313,6 +423,10 @@ int main(int argc, char *argv[], char *envp[]) {
       echo();
     } else if (strncmp(arg[0], "pinfo", 5) == 0) {
       pinfo();
+    } else if (strncmp(arg[0], "remindme", 8) == 0) {
+      remindme();
+    } else if (strncmp(arg[0], "clock", 5) == 0) {
+      clock_wrapper();
     } else {
       execute_cmd();
     }
