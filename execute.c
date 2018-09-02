@@ -69,8 +69,15 @@ void pinfo() {
   char exe[4096];
   int len = readlink(proc_path, exe, 4096);
   exe[len] = '\0';
+  int start = 0;
+  int length = strlen(home);
+  if(strncmp(exe, home, length) == 0)
+  {
+    exe[length-1] = '~';
+    start = length-1;
+  }
   printf(
       "pid -- %d\n\nProcess Status -- %c\nMemory - %lu\nExecutable Path - %s\n",
-      pid, state, vsize, exe);
+      pid, state, vsize, exe+start);
   return;
 }

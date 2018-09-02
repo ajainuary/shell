@@ -2,7 +2,7 @@ SOURCES = prompt.c time.c built_in.c ls.c execute.c user_details.c basic.c
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = shell
 CC = gcc
-
+CFLAGS += -O3 -march=native -w
 .PHONY: all build-shell clean
 
 all: build-shell

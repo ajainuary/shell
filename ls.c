@@ -96,7 +96,12 @@ void ls() {
         for (i = 0; time[i] != '\n'; ++i)
           ;
         time[i] = '\0';
-        printf("%c%c%c%c%c%c%c%c%c %3lu %12s %12s %10ld %s %s\n",
+        char type = '-';
+        if (S_ISDIR(details.st_mode) != 0)
+          type = 'd';
+        else if (S_ISLNK(details.st_mode) != 0)
+          type = 'l';
+        printf("%c%c%c%c%c%c%c%c%c%c %3lu %12s %12s %10ld %s %s\n", type,
                (perm[0][0] == 0) ? '-' : 'r', (perm[0][1] == 0) ? '-' : 'w',
                (perm[0][2] == 0) ? '-' : 'x', (perm[1][0] == 0) ? '-' : 'r',
                (perm[1][1] == 0) ? '-' : 'w', (perm[1][2] == 0) ? '-' : 'x',
