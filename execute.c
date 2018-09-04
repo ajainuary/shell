@@ -21,9 +21,12 @@ void execute_cmd() {
       }
     } else {
       printf("%d running in background\n", monitor_id);
-      int tmp = monitor_id;
-      wait(NULL);
-      printf("\n%d completed successfully\n", tmp);
+      int tmp;
+      wait(&tmp);
+      if(tmp == 0)
+        printf("\n%d completed successfully\n", monitor_id);
+      else
+        printf("\nCommand %d exited abnormally\n", monitor_id);
       return;
     }
   } else if (pid == 0) {
