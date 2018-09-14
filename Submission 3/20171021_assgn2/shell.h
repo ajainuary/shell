@@ -14,8 +14,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#define catch if (errno != 0){printf("Error: %s\n", strerror(errno)); errno = 0; return;}
+#define catch if (errno != 0){write(1, "Error: ", 7); write( \
+    1, strerror(errno), strlen(strerror(errno)));            \
+                              write(1, "\n", 1); errno = 0; return;}
 
+#define print(x) write(1, x, strlen(x))
 #define MAX_READ 1000000
 #define WHITESPACE " \t\r\a\n"
 struct Info {
@@ -26,18 +29,3 @@ char *commands[256];
 char home[4096];
 char *arg[32767];
 char argcount;
-void free_args();
-void prompt();
-void read_cmd();
-void expansion(int n);
-void pwd();
-void cd();
-void echo();
-void execute_cmd();
-void pinfo();
-void perms(int perm[][3], struct stat *test);
-void ls();
-void remindme();
-void clock_rtc();
-void clock_wrapper();
-void get_user(int uid, char *uname);
