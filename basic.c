@@ -1,7 +1,7 @@
 #include "shell.h"
 
 void free_args() {
-  for (int i = 0; i < argcount; ++i) {
+  for (int i = 0; arg[i] != NULL; ++i) {
     free(arg[i]);
     arg[i] = NULL;
   }
@@ -21,17 +21,19 @@ void prompt() {
     start_path = strlen(home) - 1;
     path[start_path] = '~';
   }
-  printf("<%s@%s:%s> ", name, details.nodename,
-          path + start_path);
+  printf("<%s@%s:%s> ", name, details.nodename, path + start_path);
 }
 
 void read_cmd() {
   char buffer[131072];
   memset(buffer, 0, 131072);
+  for (int i = 0; commands[i] != NULL; ++i) {
+    free(commands[i]);
+    commands[i] = NULL;
+  }
   int i = 0;
   while ((buffer[i] = fgetc(stdin)) != EOF) {
-    if (buffer[i] == '\n' && buffer[i - 1] != '\\')
-      break;  // Proposed feature : Multiline Input
+    if (buffer[i] == '\n' && (i == 0 || buffer[i - 1] != '\\')) break;
     ++i;
   }
   if (i == 0) {
@@ -49,6 +51,11 @@ void read_cmd() {
 }
 
 void expansion(int n) {
+  free_args();
+  if (commands[n] == NULL) {
+    printf("NULL\n");
+    return;
+  }
   int j = 0;
   for (char *s = strtok(commands[n], WHITESPACE); s != NULL && j < 32767;
        s = strtok(NULL, WHITESPACE), ++j) {

@@ -13,6 +13,7 @@
 #include <syscall.h>
 #include <time.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define catch if (errno != 0){printf("Error: %s\n", strerror(errno)); errno = 0; return;}
 
@@ -41,3 +42,4 @@ void remindme();
 void clock_rtc();
 void clock_wrapper();
 void get_user(int uid, char *uname);
+void sig_child_process_terminated(int sig);
