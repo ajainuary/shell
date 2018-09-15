@@ -4,13 +4,13 @@ int main(void) {
   int run = 0;
   // Set the home variable
   getcwd(home, 4096);
-  catch;
   while (run == 0) {
     prompt();
     read_cmd();
     for (int i = 0; commands[i] != NULL; ++i) {
+      free_args();
       expansion(i);
-      if (argcount == 0) continue;
+      if(argcount == 0) continue;
       if (strncmp(arg[0], "cd", 2) == 0) {
         cd();
       } else if (strcmp(arg[0], "ls\0") == 0) {
@@ -28,8 +28,11 @@ int main(void) {
       } else {
         execute_cmd();
       }
-      free_args();
       fflush(stdout);
+    }
+    for (int i = 0; commands[i] != NULL; ++i) {
+      free(commands[i]);
+      arg[i] = NULL;
     }
   }
   return 0;

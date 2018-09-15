@@ -1,10 +1,20 @@
 #include "shell.h"
+// Signal Handler called when a child process terminates
+void sig_child_process_terminated(int sig) {
+  pid_t pid;
+  int status;
+  while ((pid = waitpid(-1, &status, WNOHANG)) != -1)
+    if (WIFEXITED(status))
+      printf("Process with pid %d exited normally\n", pid);
+    else
+      printf("Process with pid %d exited with status %d\n", pid, status);
+  if (errno == ECHILD) signal(SIGCHLD, SIG_DFL), errno = 0;
+  return;
+}
 
 void execute_cmd() {
-  int pid;
-  pid = fork();
   int i = 0;
-  int bg = 0;
+  int bg = 0;  // Is the process to be run in background?
   for (i = 0; i < argcount && arg[i][0] != '&'; ++i)
     ;
   if (i < argcount) {
@@ -12,35 +22,30 @@ void execute_cmd() {
     arg[i] = NULL;
     bg = 1;
   }
-  if (pid == 0 && bg == 1) {
-    int monitor_id = fork();
-    if (monitor_id == 0) {
+  if (bg == 0) {
+    pid_t pid = fork();
+    if (pid == 0) {
+      if (execvp(arg[0], arg) == -1) {
+        printf("Wrong Command\n");
+        exit(0);
+      }
+    } else {
+      wait(NULL);
+    }
+  } else {
+    pid_t pid = fork();
+    if (pid == 0) {
       if (execvp(arg[0], arg) == -1) {
         printf("Wrong Command\n");
         return;
       }
     } else {
-      printf("%d running in background\n", monitor_id);
-      int tmp;
-      wait(&tmp);
-      if(tmp == 0)
-        printf("\n%d completed successfully\n", monitor_id);
-      else
-        printf("\nCommand %d exited abnormally\n", monitor_id);
-      return;
+      signal(SIGCHLD, sig_child_process_terminated);
+      printf("Process with pid %d running in background\n", pid);
     }
-  } else if (pid == 0) {
-    if (execvp(arg[0], arg) == -1) {
-      printf("Wrong Command\n");
-      catch;
-      return;
-    }
-  } else if (bg == 0)
-    wait(&pid);
-  if (bg == 1) sleep(1);
+  }
   return;
 }
-
 void pinfo() {
   int pid;
   if (argcount == 1)
@@ -74,13 +79,13 @@ void pinfo() {
   exe[len] = '\0';
   int start = 0;
   int length = strlen(home);
-  if(strncmp(exe, home, length) == 0)
-  {
-    exe[length-1] = '~';
-    start = length-1;
+  if (strncmp(exe, home, length) == 0) {
+    exe[length - 1] = '~';
+    start = length - 1;
   }
   printf(
-      "pid -- %d\n\nProcess Status -- %c\nMemory - %lu\nExecutable Path - %s\n",
-      pid, state, vsize, exe+start);
+      "pid -- %d\n\nProcess Status -- %c\nMemory - %lu\nExecutable Path - "
+      "%s\n",
+      pid, state, vsize, exe + start);
   return;
 }
