@@ -9,6 +9,7 @@ void free_args() {
 
 void prompt() {
   char path[4096];
+  char prompt_text[16384];
   getcwd(path, 4096);
   catch;
   char name[4096];
@@ -21,8 +22,9 @@ void prompt() {
     start_path = strlen(home) - 1;
     path[start_path] = '~';
   }
-  printf("<%s@%s:%s> ", name, details.nodename,
+  sprintf(prompt_text, "<%s@%s:%s> ", name, details.nodename,
           path + start_path);
+  print(prompt_text);
 }
 
 void read_cmd() {
