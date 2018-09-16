@@ -14,26 +14,7 @@ void sig_child_process_terminated(int sig) {
 
 void execute_cmd() {
   int i = 0;
-  int bg = 0;  // Is the process to be run in background?
-  char *op = NULL; //Output file
-  char *ip = NULL; //Input file
-  for (i = 0; i < argcount && arg[i][0] != '&'; ++i)
-  {
-    if(arg[i] == NULL)
-    {
-      if(arg[i+1] != NULL)
-      {
-        op = malloc(sizeof(char) * strlen(arg[i+1]));
-        strcpy(op, arg[i+1]);
-      }
-    }
-  }
-  if (i < argcount) {
-    free(arg[i]);
-    arg[i] = NULL;
-    bg = 1;
-  }
-  if (bg == 0) {
+  if (_is_background == 0) {
     pid_t pid = fork();
     if (pid == 0) {
       if (execvp(arg[0], arg) == -1) {

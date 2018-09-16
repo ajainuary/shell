@@ -9,8 +9,12 @@ int main(void) {
     read_cmd();
     for (int i = 0; commands[i] != NULL; ++i) {
       free_args();
-      expansion(i);
-      if(argcount == 0) continue;
+      //Save state of fd table
+      int out,in;
+      dup2(1, out);
+      dup2(0, in);
+      interpret(i);
+      if (argcount == 0) continue;
       if (strncmp(arg[0], "cd", 2) == 0) {
         cd();
       } else if (strcmp(arg[0], "ls\0") == 0) {
@@ -29,10 +33,9 @@ int main(void) {
         execute_cmd();
       }
       fflush(stdout);
-    }
-    for (int i = 0; commands[i] != NULL; ++i) {
-      free(commands[i]);
-      arg[i] = NULL;
+      //Restore state of fd table
+      dup2(out, 1);
+      dup2(in, 0);
     }
   }
   return 0;
