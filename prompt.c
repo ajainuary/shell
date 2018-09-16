@@ -30,10 +30,6 @@ int main(void) {
       }
       fflush(stdout);
     }
-    for (int i = 0; commands[i] != NULL; ++i) {
-      free(commands[i]);
-      arg[i] = NULL;
-    }
   }
   return 0;
 }
