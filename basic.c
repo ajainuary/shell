@@ -56,6 +56,7 @@ void interpret(int n) {
   int j = 0;
   char *op = NULL;  // Output file
   char *ip = NULL;  // Input file
+  int append = 0;   // Should append = 1 or overwrite = 0
   for (char *s = strtok(commands[n], WHITESPACE); s != NULL && j < 32767;
        s = strtok(NULL, WHITESPACE)) {
     char *new;
@@ -74,6 +75,7 @@ void interpret(int n) {
         ++j;
         break;
       case '>':
+        if (s[1] == '>') append = 1;
         s = strtok(NULL, WHITESPACE);
         if (s == NULL) {
           printf("Output filename missing\n");
@@ -104,7 +106,11 @@ void interpret(int n) {
   arg[j] = NULL;
   argcount = j;
   if (op != NULL) {
-    int out = open(op, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+    int out;
+    if (append == 0)
+      out = open(op, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    else
+      out = open(op, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     dup2(out, 1);
   }
   if (ip != NULL) {
