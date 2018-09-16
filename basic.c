@@ -1,4 +1,5 @@
 #include "shell.h"
+int _is_background = 0;
 
 void free_args() {
   for (int i = 0; arg[i] != NULL; ++i) {
@@ -50,33 +51,71 @@ void read_cmd() {
   return;
 }
 
-void expansion(int n) {
+void interpret(int n) {
   free_args();
-  if (commands[n] == NULL) {
-    printf("NULL\n");
-    return;
-  }
   int j = 0;
+  char *op = NULL;  // Output file
+  char *ip = NULL;  // Input file
+  int append = 0;   // Should append = 1 or overwrite = 0
   for (char *s = strtok(commands[n], WHITESPACE); s != NULL && j < 32767;
-       s = strtok(NULL, WHITESPACE), ++j) {
-    arg[j] = malloc(strlen(s) + 1);
-    strcpy(arg[j], s);
+       s = strtok(NULL, WHITESPACE)) {
+    char *new;
+    switch (s[0]) {
+      case '~':
+        new = malloc((strlen(home) + strlen(s) + 3) * sizeof(char));
+        strcpy(new, home);
+        int len = strlen(home);
+        if (s[1] != '/') {
+          new[len] = '/';
+          new[len + 1] = '\0';
+        }
+        strcat(new, s + 1);
+        free(s);
+        arg[j] = new;
+        ++j;
+        break;
+      case '>':
+        if (s[1] == '>') append = 1;
+        s = strtok(NULL, WHITESPACE);
+        if (s == NULL) {
+          printf("Output filename missing\n");
+          return;
+        }
+        op = malloc(strlen(s) * sizeof(char));
+        strcpy(op, s);
+        break;
+      case '<':
+        s = strtok(NULL, WHITESPACE);
+        if (s == NULL) {
+          printf("Input filename missing\n");
+          return;
+        }
+        op = malloc(strlen(s) * sizeof(char));
+        strcpy(ip, s);
+        break;
+      case '&':
+        _is_background = 1;
+        break;
+      default:
+        arg[j] = malloc(sizeof(char) * strlen(s));
+        strcpy(arg[j], s);
+        ++j;
+        break;
+    }
   }
   arg[j] = NULL;
   argcount = j;
-  for (int i = 0; i < argcount; ++i) {
-    if (arg[i][0] == '~') {
-      char *new = malloc((strlen(home) + strlen(arg[i]) + 3) * sizeof(char));
-      strcpy(new, home);
-      int len = strlen(home);
-      if (arg[i][1] != '/') {
-        new[len] = '/';
-        new[len + 1] = '\0';
-      }
-      strcat(new, arg[i] + 1);
-      free(arg[i]);
-      arg[i] = new;
-    }
+  if (op != NULL) {
+    int out;
+    if (append == 0)
+      out = open(op, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    else
+      out = open(op, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    dup2(out, 1);
+  }
+  if (ip != NULL) {
+    int in = open(ip, O_RDONLY);
+    dup2(in, 0);
   }
   return;
 }

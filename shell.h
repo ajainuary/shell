@@ -1,3 +1,5 @@
+#ifndef ABCD
+#define ABCD ABCD
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -30,7 +32,7 @@ char argcount;
 void free_args();
 void prompt();
 void read_cmd();
-void expansion(int n);
+void interpret(int n);
 void pwd();
 void cd();
 void echo();
@@ -43,3 +45,5 @@ void clock_rtc();
 void clock_wrapper();
 void get_user(int uid, char *uname);
 void sig_child_process_terminated(int sig);
+extern int _is_background;
+#endif
