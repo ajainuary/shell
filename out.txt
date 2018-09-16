@@ -1,0 +1,14 @@
+test
+a.out
+basic.c
+built_in.c
+execute.c
+ls.c
+Makefile
+out.txt
+prompt.c
+README.md
+redir.c
+shell.h
+time.c
+user_details.c
