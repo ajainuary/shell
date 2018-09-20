@@ -115,6 +115,7 @@ void interpret(int n) {
   }
   if (ip != NULL) {
     int in = open(ip, O_RDONLY);
+    catch;
     dup2(in, 0);
   }
   return;
