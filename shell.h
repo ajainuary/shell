@@ -16,7 +16,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <linux/unistd.h>
 #define catch if (errno != 0){printf("Error: %s\n", strerror(errno)); errno = 0; return;}
 
 #define MAX_READ 1000000
@@ -32,7 +32,7 @@ char argcount;
 void free_args();
 void prompt();
 void read_cmd();
-void interpret(int n);
+void interpret(char *cmd);
 void pwd();
 void cd();
 void echo();
