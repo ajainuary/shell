@@ -51,13 +51,13 @@ void read_cmd() {
   return;
 }
 
-void interpret(int n) {
+void interpret(char *cmd) {
   free_args();
   int j = 0;
   char *op = NULL;  // Output file
   char *ip = NULL;  // Input file
   int append = 0;   // Should append = 1 or overwrite = 0
-  for (char *s = strtok(commands[n], WHITESPACE); s != NULL && j < 32767;
+  for (char *s = strtok(cmd, WHITESPACE); s != NULL && j < 32767;
        s = strtok(NULL, WHITESPACE)) {
     char *new;
     switch (s[0]) {
