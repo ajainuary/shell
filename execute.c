@@ -70,7 +70,9 @@ void execute_cmd() {
         exit(0);
       }
     } else {
+      foreground_proc = pid;
       wait(NULL);
+      foreground_proc = 0;
     }
   } else {
     pid_t pid = fork();
@@ -195,7 +197,9 @@ void bg() {
     printf("No such job exists\n");
     return;
   }
-  kill(reader->pid, SIGCONT);
+  printf("%d\n", reader->pid);
+  if(kill(reader->pid, SIGCONT) != -1)
+    reader->status = 0;
   return;
 }
 
