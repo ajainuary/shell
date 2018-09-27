@@ -1,6 +1,7 @@
 #include "shell.h"
 int _is_background = 0;
-
+int isOutputRedirected = 0;
+int isInputRedirected = 0;
 void free_args() {
   for (int i = 0; arg[i] != NULL; ++i) {
     free(arg[i]);
@@ -83,6 +84,7 @@ void interpret(char *cmd) {
         }
         op = malloc(strlen(s) * sizeof(char));
         strcpy(op, s);
+        isOutputRedirected = 1;
         break;
       case '<':
         s = strtok(NULL, WHITESPACE);
@@ -90,8 +92,9 @@ void interpret(char *cmd) {
           printf("Input filename missing\n");
           return;
         }
-        op = malloc(strlen(s) * sizeof(char));
+        ip = malloc(strlen(s) * sizeof(char));
         strcpy(ip, s);
+        isInputRedirected = 1;
         break;
       case '&':
         _is_background = 1;
@@ -118,7 +121,6 @@ void interpret(char *cmd) {
     catch;
     close(0);
     dup2(in, 0);
-    close(in);
   }
   return;
 }

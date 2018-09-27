@@ -1,0 +1,93 @@
+execve("/home/ajainuary/.config/composer/vendor/bin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = -1 ENOENT (No such file or directory)
+execve("/home/ajainuary/.local/bin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = -1 ENOENT (No such file or directory)
+execve("/usr/local/sbin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = -1 ENOENT (No such file or directory)
+execve("/usr/local/bin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = -1 ENOENT (No such file or directory)
+execve("/usr/sbin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = -1 ENOENT (No such file or directory)
+execve("/usr/bin/sort", ["sort"], 0x7ffdd4ead018 /* 78 vars */) = 0
+brk(NULL)                               = 0x563f388e9000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=125369, ...}) = 0
+mmap(NULL, 125369, PROT_READ, MAP_PRIVATE, 5, 0) = 0x7f298a497000
+close(5)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libpthread.so.0", O_RDONLY|O_CLOEXEC) = 5
+read(5, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0000b\0\0\0\0\0\0"..., 832) = 832
+fstat(5, {st_mode=S_IFREG|0755, st_size=144976, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f298a495000
+mmap(NULL, 2221184, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 5, 0) = 0x7f298a070000
+mprotect(0x7f298a08a000, 2093056, PROT_NONE) = 0
+mmap(0x7f298a289000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 5, 0x19000) = 0x7f298a289000
+mmap(0x7f298a28b000, 13440, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f298a28b000
+close(5)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 5
+read(5, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260\34\2\0\0\0\0\0"..., 832) = 832
+fstat(5, {st_mode=S_IFREG|0755, st_size=2030544, ...}) = 0
+mmap(NULL, 4131552, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 5, 0) = 0x7f2989c7f000
+mprotect(0x7f2989e66000, 2097152, PROT_NONE) = 0
+mmap(0x7f298a066000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 5, 0x1e7000) = 0x7f298a066000
+mmap(0x7f298a06c000, 15072, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f298a06c000
+close(5)                                = 0
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f298a492000
+arch_prctl(ARCH_SET_FS, 0x7f298a492740) = 0
+mprotect(0x7f298a066000, 16384, PROT_READ) = 0
+mprotect(0x7f298a289000, 4096, PROT_READ) = 0
+mprotect(0x563f37225000, 4096, PROT_READ) = 0
+mprotect(0x7f298a4b6000, 4096, PROT_READ) = 0
+munmap(0x7f298a497000, 125369)          = 0
+set_tid_address(0x7f298a492a10)         = 10771
+set_robust_list(0x7f298a492a20, 24)     = 0
+rt_sigaction(SIGRTMIN, {sa_handler=0x7f298a075cb0, sa_mask=[], sa_flags=SA_RESTORER|SA_SIGINFO, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGRT_1, {sa_handler=0x7f298a075d50, sa_mask=[], sa_flags=SA_RESTORER|SA_RESTART|SA_SIGINFO, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+brk(NULL)                               = 0x563f388e9000
+brk(0x563f3890a000)                     = 0x563f3890a000
+openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=11436544, ...}) = 0
+mmap(NULL, 11436544, PROT_READ, MAP_PRIVATE, 5, 0) = 0x7f2989196000
+close(5)                                = 0
+rt_sigaction(SIGALRM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGHUP, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGINT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGPIPE, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGQUIT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGTERM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGIO, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGPROF, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGVTALRM, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGXCPU, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGXFSZ, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigaction(SIGALRM, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGHUP, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGINT, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGPIPE, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGQUIT, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGTERM, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGIO, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGPROF, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGVTALRM, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGXCPU, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGXFSZ, {sa_handler=0x563f37011580, sa_mask=[HUP INT QUIT PIPE ALRM TERM XCPU XFSZ VTALRM PROF IO], sa_flags=SA_RESTORER, sa_restorer=0x7f298a082890}, NULL, 8) = 0
+rt_sigaction(SIGCHLD, {sa_handler=SIG_DFL, sa_mask=[CHLD], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x7f2989cbdf20}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+sched_getaffinity(0, 128, [0, 1, 2, 3, 4, 5, 6, 7]) = 8
+fadvise64(0, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
+fstat(0, {st_mode=S_IFREG|0644, st_size=201, ...}) = 0
+prlimit64(0, RLIMIT_DATA, NULL, {rlim_cur=RLIM64_INFINITY, rlim_max=RLIM64_INFINITY}) = 0
+prlimit64(0, RLIMIT_AS, NULL, {rlim_cur=RLIM64_INFINITY, rlim_max=RLIM64_INFINITY}) = 0
+prlimit64(0, RLIMIT_RSS, NULL, {rlim_cur=RLIM64_INFINITY, rlim_max=RLIM64_INFINITY}) = 0
+sysinfo({uptime=12360, loads=[12768, 16864, 24032], totalram=8123518976, freeram=3095228416, sharedram=92561408, bufferram=157429760, totalswap=0, freeswap=0, procs=1014, totalhigh=0, freehigh=0, mem_unit=1}) = 0
+sysinfo({uptime=12360, loads=[12768, 16864, 24032], totalram=8123518976, freeram=3095228416, sharedram=92561408, bufferram=157429760, totalswap=0, freeswap=0, procs=1014, totalhigh=0, freehigh=0, mem_unit=1}) = 0
+fstat(0, {st_mode=S_IFREG|0644, st_size=201, ...}) = 0
+read(0, "user_details.o prompt.o ls.o a.o"..., 4096) = 201
+read(0, "", 4096)                       = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+write(1, "user_details.o prompt.o ls.o a.o"..., 201) = 201
+lseek(0, 0, SEEK_CUR)                   = 201
+close(0)                                = 0
+close(1)                                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++

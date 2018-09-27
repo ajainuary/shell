@@ -77,7 +77,7 @@ void execute_cmd() {
     if (pid == 0) {
       if (execvp(arg[0], arg) == -1) {
         printf("Wrong Command\n");
-        return;
+        exit(0);
       }
     } else {
       signal(SIGCHLD, sig_child_process_terminated);

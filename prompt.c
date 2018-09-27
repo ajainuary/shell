@@ -146,9 +146,7 @@ int main(void) {
       } else {
         free_args();
         // Save state of fd table
-        int out, in;
-        dup2(1, out);
-        dup2(0, in);
+        int out = dup(1), in = dup(0);
         interpret(commands[i]);
         if (argcount == 0) continue;
         if (strncmp(arg[0], "cd", 2) == 0) {
@@ -182,7 +180,6 @@ int main(void) {
         } else if (strcmp(arg[0], "quit\0") == 0) {
           return 0;
         } else {
-          printf("send\n");
           execute_cmd();
         }
         fflush(stdout);
