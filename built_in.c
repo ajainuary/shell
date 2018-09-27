@@ -28,3 +28,11 @@ void echo() {
   printf("\n");
   return;
 }
+
+void Mysetenv() {
+  setenv(arg[1], (arg[2] != NULL) ? arg[2] : "", 1);
+}
+
+void Myunsetenv() {
+  unsetenv(arg[1]);
+}
