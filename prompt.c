@@ -3,8 +3,19 @@ char *commands[256];
 char home[4096];
 char *arg[32767];
 char argcount;
+int foreground_proc = 0;
+void handle_SIGINT(int signum)
+{
+  //Reset first
+  signal(SIGINT, handle_SIGINT);
+  if(foreground_proc != 0)
+    kill(foreground_proc, SIGINT);
+  return;
+}
+
 int main(void) {
   int run = 0;
+  signal(SIGINT, handle_SIGINT);
   // Set the home variable
   getcwd(home, 4096);
   while (run == 0) {

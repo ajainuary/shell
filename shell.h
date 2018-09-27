@@ -57,4 +57,5 @@ extern int isInputRedirected;
 extern int isOutputRedirected;
 extern int InputFD;
 extern int OutputFD;
+extern int foreground_proc;
 #endif
