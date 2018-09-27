@@ -162,3 +162,66 @@ void jobs() {
            (Read->status == 0) ? "Running" : "Stopped", cmd, Read->pid);
   }
 }
+
+void fg() {
+  int job = atoi(arg[1]);
+  proc_node *reader = table_start;
+  for (int i = 0; i < job - 1; ++i) {
+    if (reader == NULL) {
+      printf("No such job exists\n");
+      return;
+    }
+    reader = reader->next;
+  }
+  if (reader == NULL) {
+    printf("No such job exists\n");
+    return;
+  }
+  waitpid((pid_t)reader->pid, NULL, 0);
+  return;
+}
+
+void bg() {
+  int job = atoi(arg[1]);
+  proc_node *reader = table_start;
+  for (int i = 0; i < job - 1; ++i) {
+    if (reader == NULL) {
+      printf("No such job exists\n");
+      return;
+    }
+    reader = reader->next;
+  }
+  if (reader == NULL) {
+    printf("No such job exists\n");
+    return;
+  }
+  kill(reader->pid, SIGCONT);
+  return;
+}
+
+void kjob() {
+  int job = atoi(arg[1]);
+  proc_node *reader = table_start;
+  for (int i = 0; i < job - 1; ++i) {
+    if (reader == NULL) {
+      printf("No such job exists\n");
+      return;
+    }
+    reader = reader->next;
+  }
+  if (reader == NULL) {
+    printf("No such job exists\n");
+    return;
+  }
+  int sig = atoi(arg[2]);
+  kill(reader->pid, sig);
+  return;
+}
+
+void overkill() {
+  proc_node *reader = table_start;
+  while (reader != NULL) {
+    kill(reader->pid, 9);
+  }
+  return;
+}

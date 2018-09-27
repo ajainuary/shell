@@ -1,6 +1,9 @@
 #include "shell.h"
 int _is_background = 0;
-
+int isOutputRedirected = 0;
+int isInputRedirected = 0;
+int InputFD = 0;
+int OutputFD = 0;
 void free_args() {
   for (int i = 0; arg[i] != NULL; ++i) {
     free(arg[i]);
@@ -81,8 +84,13 @@ void interpret(char *cmd) {
           printf("Output filename missing\n");
           return;
         }
-        op = malloc(strlen(s) * sizeof(char));
-        strcpy(op, s);
+        isOutputRedirected = 1;
+        if (append == 0)
+          OutputFD = open(s, O_WRONLY | O_CREAT,
+                          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+        else
+          OutputFD = open(s, O_WRONLY | O_CREAT | O_APPEND,
+                          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
         break;
       case '<':
         s = strtok(NULL, WHITESPACE);
@@ -90,8 +98,8 @@ void interpret(char *cmd) {
           printf("Input filename missing\n");
           return;
         }
-        op = malloc(strlen(s) * sizeof(char));
-        strcpy(ip, s);
+        isInputRedirected = 1;
+        InputFD = open(s, O_RDONLY);
         break;
       case '&':
         _is_background = 1;
@@ -105,20 +113,19 @@ void interpret(char *cmd) {
   }
   arg[j] = NULL;
   argcount = j;
-  if (op != NULL) {
-    int out;
-    if (append == 0)
-      out = open(op, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    else
-      out = open(op, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    dup2(out, 1);
-  }
-  if (ip != NULL) {
-    int in = open(ip, O_RDONLY);
-    catch;
-    close(0);
-    dup2(in, 0);
-    close(in);
-  }
+  // if (op != NULL) {
+  //   int out;
+  //   if (append == 0)
+  //     out = open(op, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  //   else
+  //     out = open(op, O_WRONLY | O_CREAT | O_APPEND,
+  //                S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  //   dup2(out, 1);
+  // }
+  // if (ip != NULL) {
+  //   int in = open(ip, O_RDONLY);
+  //   catch;
+  //   dup2(in, 0);
+  // }
   return;
 }

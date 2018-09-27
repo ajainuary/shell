@@ -28,7 +28,7 @@ int main(void) {
         if (leader == 0) {
           close(1);
           dup2(pipes[0][1], 1);  // Redirect my output to the pipe
-          close(pipes[0][1]);
+          close(pipes[0][0]);
           interpret(piped[0]);
           if (argcount == 0) continue;
           if (strncmp(arg[0], "cd", 2) == 0) {
@@ -56,12 +56,11 @@ int main(void) {
               return 0;
             }
           }
-          close(pipes[0][0]);  // Close unused fd (Read End)
           close(1);
           return 0;
         }
-        setpgid(leader, leader);  // Dobby is a free elf now, dobby has no
-                                  // master
+        close(pipes[0][0]);  // Close unused fd (Read End)
+        setpgid(leader, leader);
         close(pipes[0][1]);
         for (int k = 1; k < j - 1; ++k) {
           pipe(pipes[k]);
@@ -138,6 +137,7 @@ int main(void) {
         close(pipes[0][0]);
         while (waitpid(-1, NULL, 0) != -1)
           ;
+
         errno = 0;
       } else {
         free_args();
@@ -165,9 +165,20 @@ int main(void) {
           Mysetenv();
         } else if (strcmp(arg[0], "unsetenv\0") == 0) {
           Myunsetenv();
-        } else if (strcmp(arg[0], "jobs\0") == 0){
+        } else if (strcmp(arg[0], "jobs\0") == 0) {
           jobs();
+        } else if (strcmp(arg[0], "fg\0") == 0) {
+          fg();
+        } else if (strcmp(arg[0], "bg\0") == 0) {
+          bg();
+        } else if (strcmp(arg[0], "kjob\0") == 0) {
+          kjob();
+        } else if (strcmp(arg[0], "overkill\0") == 0) {
+          overkill();
+        } else if (strcmp(arg[0], "quit\0") == 0) {
+          return 0;
         } else {
+          printf("send\n");
           execute_cmd();
         }
         fflush(stdout);

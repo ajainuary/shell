@@ -49,4 +49,12 @@ extern void Mysetenv();
 extern void Myunsetenv();
 extern void jobs();
 extern int _is_background;
+extern void fg();
+extern void bg();
+extern void kjob();
+extern void overkill();
+extern int isInputRedirected;
+extern int isOutputRedirected;
+extern int InputFD;
+extern int OutputFD;
 #endif
