@@ -26,7 +26,7 @@ int main(void) {
         free_args();
         int leader = fork();
         if (leader == 0) {
-          close(1);
+          // close(1);
           dup2(pipes[0][1], 1);  // Redirect my output to the pipe
           close(pipes[0][0]);
           interpret(piped[0]);
@@ -53,23 +53,23 @@ int main(void) {
             fflush(stdout);
             if (execvp(arg[0], arg) == -1) {
               printf("Wrong Command\n");
-              return 0;
+              exit(0);
             }
           }
-          close(1);
-          return 0;
+          // close(1);
+          exit(0);
         }
-        close(pipes[0][0]);  // Close unused fd (Read End)
+        close(pipes[0][1]);  // Close unused fd (Read End)
         setpgid(leader, leader);
-        close(pipes[0][1]);
+        // close(pipes[0][1]);
         for (int k = 1; k < j - 1; ++k) {
           pipe(pipes[k]);
           int middling = fork();
           if (middling == 0) {
             dup2(pipes[k][1], 1);  // Redirect my output to the pipe
-            close(pipes[k][1]);
+            close(pipes[k][0]);
             dup2(pipes[k - 1][0], 0);  // Redirect my input to pipe
-            close(pipes[k - 1][0]);
+            close(pipes[k - 1][1]);
             interpret(piped[k]);
             if (argcount == 0) continue;
             if (strncmp(arg[0], "cd", 2) == 0) {
@@ -87,23 +87,26 @@ int main(void) {
             } else if (strcmp(arg[0], "clock\0") == 0) {
               clock_wrapper();
             } else {
-              fflush(stdout);
+              // fflush(stdout);
               if (execvp(arg[0], arg) == -1) {
                 printf("Wrong Command\n");
-                return 0;
+                exit(0);
               }
             }
+            // close(pipes[k - 1][0]);  // Close unused fd (Read End)
+            // close(pipes[k][1]);      // close unused fd (Write End)
+            exit(0);
+          }
             close(pipes[k - 1][0]);  // Close unused fd (Read End)
             close(pipes[k][1]);      // close unused fd (Write End)
-            return 0;
-          }
           setpgid(middling, leader);
         }
+
         int laggard = fork();  // last of the real ones
         free_args();
         if (laggard == 0) {
           dup2(pipes[j - 2][0], 0);  // Redirect my input to pipe
-          close(pipes[j - 2][0]);
+          close(pipes[j - 2][1]);
           interpret(piped[j - 1]);
           if (argcount == 0) continue;
           if (strncmp(arg[0], "cd", 2) == 0) {
@@ -127,14 +130,15 @@ int main(void) {
           } else {
             if (execvp(arg[0], arg) == -1) {
               printf("Wrong Command\n");
-              return 0;
+              exit(0);
             }
           }
-          close(pipes[j - 2][1]);  // close unused fd (Write End)
-          return 0;
+          // close(pipes[j - 2][1]);  // close unused fd (Write End)
+          exit(0);
         }
+          close(pipes[j - 2][0]);  // close unused fd (Write End)
         setpgid(laggard, leader);
-        close(pipes[0][0]);
+        // close(pipes[0][0]);
         while (waitpid(-1, NULL, 0) != -1)
           ;
 
