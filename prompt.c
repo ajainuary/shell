@@ -1,5 +1,8 @@
 #include "shell.h"
-
+char *commands[256];
+char home[4096];
+char *arg[32767];
+char argcount;
 int main(void) {
   int run = 0;
   // Set the home variable
@@ -42,6 +45,10 @@ int main(void) {
             remindme();
           } else if (strcmp(arg[0], "clock\0") == 0) {
             clock_wrapper();
+          } else if (strcmp(arg[0], "setenv\0") == 0) {
+            Mysetenv();
+          } else if (strcmp(arg[0], "unsetenv\0") == 0) {
+            Myunsetenv();
           } else {
             fflush(stdout);
             if (execvp(arg[0], arg) == -1) {
@@ -114,6 +121,10 @@ int main(void) {
             remindme();
           } else if (strcmp(arg[0], "clock\0") == 0) {
             clock_wrapper();
+          } else if (strcmp(arg[0], "setenv\0") == 0) {
+            Mysetenv();
+          } else if (strcmp(arg[0], "unsetenv\0") == 0) {
+            Myunsetenv();
           } else {
             if (execvp(arg[0], arg) == -1) {
               printf("Wrong Command\n");
@@ -150,6 +161,12 @@ int main(void) {
           remindme();
         } else if (strcmp(arg[0], "clock\0") == 0) {
           clock_wrapper();
+        } else if (strcmp(arg[0], "setenv\0") == 0) {
+          Mysetenv();
+        } else if (strcmp(arg[0], "unsetenv\0") == 0) {
+          Myunsetenv();
+        } else if (strcmp(arg[0], "jobs\0") == 0){
+          jobs();
         } else {
           execute_cmd();
         }

@@ -1,13 +1,61 @@
 #include "shell.h"
+typedef struct process_node {
+  pid_t pid;
+  int status;
+  struct process_node *next;
+} proc_node;
+proc_node *table_start = NULL;
+proc_node *table_end = NULL;
 // Signal Handler called when a child process terminates
 void sig_child_process_terminated(int sig) {
   pid_t pid;
   int status;
-  while ((pid = waitpid(-1, &status, WNOHANG)) != -1)
-    if (WIFEXITED(status))
+  while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
+    if (WIFEXITED(status)) {
+      proc_node *reader = table_start;
+      if (reader->pid == pid) {
+        table_start = reader->next;
+        free(reader);
+        continue;
+      }
+      while (reader->next != NULL) {
+        proc_node *next_reader = reader->next;
+        if (next_reader->pid == pid) {
+          reader->next = next_reader->next;
+          free(next_reader);
+          break;
+        }
+      }
       printf("Process with pid %d exited normally\n", pid);
-    else
+    } else if (WIFSTOPPED(status)) {
+      proc_node *reader = table_start;
+      while (reader != NULL) {
+        if (reader->pid == pid) {
+          reader->status = 1;
+          break;
+        }
+        reader = reader->next;
+      }
+    } else {
+      proc_node *reader = table_start;
+      if (reader->pid == pid) {
+        table_start = reader->next;
+        free(reader);
+        continue;
+      } else {
+        while (reader != NULL) {
+          proc_node *next_reader = reader->next;
+          if (next_reader->pid == pid) {
+            reader->next = next_reader->next;
+            free(next_reader);
+            break;
+          }
+          reader = reader->next;
+        }
+      }
       printf("Process with pid %d exited with status %d\n", pid, status);
+    }
+  }
   if (errno == ECHILD) signal(SIGCHLD, SIG_DFL), errno = 0;
   return;
 }
@@ -33,11 +81,30 @@ void execute_cmd() {
       }
     } else {
       signal(SIGCHLD, sig_child_process_terminated);
+      table_end = table_start;
+      while (table_end != NULL && table_end->next != NULL)
+        table_end = table_end->next;
+      // Make an entry into the process table
+      if (table_end == NULL) {
+        table_start = malloc(sizeof(proc_node));
+        table_end = table_start;
+        table_start->pid = pid;
+        table_start->status = 0;
+        table_start->next = NULL;
+        table_end = table_start;
+      } else {
+        table_end->next = malloc(sizeof(proc_node));
+        table_end = table_end->next;
+        table_end->next = NULL;
+        table_end->status = 0;
+        table_end->pid = pid;
+      }
       printf("Process with pid %d running in background\n", pid);
     }
   }
   return;
 }
+
 void pinfo() {
   int pid;
   if (argcount == 1)
@@ -80,4 +147,18 @@ void pinfo() {
       "%s\n",
       pid, state, vsize, exe + start);
   return;
+}
+
+void jobs() {
+  proc_node *Read = table_start;
+  for (int i = 1; Read != NULL; ++i, Read = Read->next) {
+    char pcb[128];
+    sprintf(pcb, "/proc/%d/cmdline", Read->pid);
+    int fd = open(pcb, O_RDONLY);
+    char cmd[128];
+    read(fd, cmd, 128);
+    close(fd);
+    printf("[%d]\t%s\t%s\t[%d]\n", i,
+           (Read->status == 0) ? "Running" : "Stopped", cmd, Read->pid);
+  }
 }
