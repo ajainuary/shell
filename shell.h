@@ -53,9 +53,17 @@ extern void fg();
 extern void bg();
 extern void kjob();
 extern void overkill();
+void handle_SIGINT(int signum);
+void handle_SIGTSTP(int signum);
 extern int isInputRedirected;
 extern int isOutputRedirected;
 extern int InputFD;
 extern int OutputFD;
 extern int foreground_proc;
+typedef struct process_node {
+  pid_t pid;
+  int status;
+  struct process_node *next;
+} proc_node;
+extern proc_node *table_start;
 #endif

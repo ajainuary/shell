@@ -30,9 +30,19 @@ void echo() {
 }
 
 void Mysetenv() {
+	if(argcount < 2 || argcount > 3)
+		{
+			printf("Invalid Usage");
+			return;
+		}
   setenv(arg[1], (arg[2] != NULL) ? arg[2] : "", 1);
 }
 
 void Myunsetenv() {
+if(argcount != 2)
+		{
+			printf("Invalid Usage");
+			return;
+		}
   unsetenv(arg[1]);
 }

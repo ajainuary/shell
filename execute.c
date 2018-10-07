@@ -1,9 +1,5 @@
 #include "shell.h"
-typedef struct process_node {
-  pid_t pid;
-  int status;
-  struct process_node *next;
-} proc_node;
+
 proc_node *table_start = NULL;
 proc_node *table_end = NULL;
 // Signal Handler called when a child process terminates
@@ -25,6 +21,7 @@ void sig_child_process_terminated(int sig) {
           free(next_reader);
           break;
         }
+        reader = reader->next;
       }
       printf("Process with pid %d exited normally\n", pid);
     } else if (WIFSTOPPED(status)) {
@@ -71,17 +68,24 @@ void execute_cmd() {
       }
     } else {
       foreground_proc = pid;
-      wait(NULL);
+      waitpid(pid, NULL, WUNTRACED);
       foreground_proc = 0;
     }
   } else {
     pid_t pid = fork();
     if (pid == 0) {
+      // signal(SIGINT, SIG_DFL);
+      // signal(SIGQUIT, SIG_DFL);
+      // signal(SIGTTIN, SIG_DFL);
+      // signal(SIGTTOU, SIG_DFL);
+      // signal(SIGCHLD, SIG_DFL);
+      setpgid(getpid(), pid);
       if (execvp(arg[0], arg) == -1) {
         printf("Wrong Command\n");
         exit(0);
       }
     } else {
+      foreground_proc = 0;
       signal(SIGCHLD, sig_child_process_terminated);
       table_end = table_start;
       while (table_end != NULL && table_end->next != NULL)
@@ -166,6 +170,10 @@ void jobs() {
 }
 
 void fg() {
+  if (argcount != 2) {
+    printf("Invalid usage\n");
+    return;
+  }
   int job = atoi(arg[1]);
   proc_node *reader = table_start;
   for (int i = 0; i < job - 1; ++i) {
@@ -179,11 +187,36 @@ void fg() {
     printf("No such job exists\n");
     return;
   }
-  waitpid((pid_t)reader->pid, NULL, 0);
+  int tmp = reader->pid;
+  proc_node *reader2 = table_start;
+  kill(tmp, SIGCONT);
+  if (reader2->pid == reader->pid) {
+    table_start = reader2->next;
+    free(reader2);
+  } else {
+    while (reader2->next != NULL) {
+      proc_node *next_reader = reader2->next;
+      if (next_reader->pid == reader->pid) {
+        reader2->next = next_reader->next;
+        free(next_reader);
+        break;
+      }
+      reader2 = reader2->next;
+    }
+  }
+  signal(SIGINT, handle_SIGINT);
+  signal(SIGTSTP, handle_SIGTSTP);
+  foreground_proc = tmp;
+  waitpid((pid_t)tmp, NULL, WUNTRACED);
+  foreground_proc = 0;
   return;
 }
 
 void bg() {
+  if (argcount != 2) {
+    printf("Invalid usage\n");
+    return;
+  }
   int job = atoi(arg[1]);
   proc_node *reader = table_start;
   for (int i = 0; i < job - 1; ++i) {
@@ -198,12 +231,15 @@ void bg() {
     return;
   }
   printf("%d\n", reader->pid);
-  if(kill(reader->pid, SIGCONT) != -1)
-    reader->status = 0;
+  if (kill(reader->pid, SIGCONT) != -1) reader->status = 0;
   return;
 }
 
 void kjob() {
+  if (argcount != 3) {
+    printf("Invalid usage\n");
+    return;
+  }
   int job = atoi(arg[1]);
   proc_node *reader = table_start;
   for (int i = 0; i < job - 1; ++i) {
@@ -226,6 +262,7 @@ void overkill() {
   proc_node *reader = table_start;
   while (reader != NULL) {
     kill(reader->pid, 9);
+    reader = reader->next;
   }
   return;
 }

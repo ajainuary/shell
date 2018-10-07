@@ -4,22 +4,59 @@ char home[4096];
 char *arg[32767];
 char argcount;
 int foreground_proc = 0;
-void handle_SIGINT(int signum)
-{
-  //Reset first
+void handle_SIGINT(int signum) {
+  // Reset first
+  if (foreground_proc != 0) kill(foreground_proc, 9);
   signal(SIGINT, handle_SIGINT);
-  if(foreground_proc != 0)
-    kill(foreground_proc, SIGINT);
+  return;
+}
+
+void handle_SIGTSTP(int signum) {
+  // Reset first
+  if (foreground_proc != 0)
+    if (kill(foreground_proc, SIGSTOP) != -1) {
+      proc_node *table_end = table_start;
+      int i = 1;
+      while (table_end != NULL && table_end->next != NULL)
+        table_end = table_end->next, ++i;
+      // Make an entry into the process table
+      if (table_end == NULL) {
+        table_start = malloc(sizeof(proc_node));
+        table_end = table_start;
+        table_start->pid = foreground_proc;
+        table_start->status = 1;
+        table_start->next = NULL;
+        table_end = table_start;
+      } else {
+        table_end->next = malloc(sizeof(proc_node));
+        table_end = table_end->next;
+        table_end->next = NULL;
+        table_end->status = 1;
+        table_end->pid = foreground_proc;
+      }
+      char pcb[128];
+      sprintf(pcb, "/proc/%d/cmdline", foreground_proc);
+      int fd = open(pcb, O_RDONLY);
+      char cmd[128];
+      read(fd, cmd, 128);
+      close(fd);
+      printf("[%d]\t%s\t%s\t[%d]\n", i, "Stopped", cmd, foreground_proc);
+    }
+  signal(SIGTSTP, handle_SIGTSTP);
   return;
 }
 
 int main(void) {
   int run = 0;
   signal(SIGINT, handle_SIGINT);
+  signal(SIGTSTP, handle_SIGTSTP);
   // Set the home variable
   getcwd(home, 4096);
+  setpgid(getpid(), getpid());
   while (run == 0) {
     prompt();
+    free_args();
+    _is_background = 0;
     read_cmd();
     for (int i = 0; commands[i] != NULL; ++i) {
       char *piped[256];
@@ -108,8 +145,8 @@ int main(void) {
             // close(pipes[k][1]);      // close unused fd (Write End)
             exit(0);
           }
-            close(pipes[k - 1][0]);  // Close unused fd (Read End)
-            close(pipes[k][1]);      // close unused fd (Write End)
+          close(pipes[k - 1][0]);  // Close unused fd (Read End)
+          close(pipes[k][1]);      // close unused fd (Write End)
           setpgid(middling, leader);
         }
 
@@ -147,7 +184,7 @@ int main(void) {
           // close(pipes[j - 2][1]);  // close unused fd (Write End)
           exit(0);
         }
-          close(pipes[j - 2][0]);  // close unused fd (Write End)
+        close(pipes[j - 2][0]);  // close unused fd (Write End)
         setpgid(laggard, leader);
         // close(pipes[0][0]);
         while (waitpid(-1, NULL, 0) != -1)

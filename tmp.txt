@@ -1,4 +1,21 @@
-1
-2
-3
-4
+-rw-r--r--   1    ajainuary    ajainuary      14472 Fri Oct  5 16:00:54 2018 user_details.o
+-rw-r--r--   1    ajainuary    ajainuary      42264 Fri Oct  5 16:00:54 2018 prompt.o
+-rw-r--r--   1    ajainuary    ajainuary      22720 Fri Oct  5 16:00:54 2018 ls.o
+-rw-r--r--   1    ajainuary    ajainuary        741 Thu Sep 27 23:49:39 2018 built_in.c
+-rw-r--r--   1    ajainuary    ajainuary       3040 Sun Sep 16 12:17:12 2018 ls.c
+-rw-r--r--   1    ajainuary    ajainuary      15000 Fri Oct  5 16:00:54 2018 built_in.o
+-rw-r--r--   1    ajainuary    ajainuary        748 Thu Sep 27 23:51:20 2018 README.md
+-rw-r--r--   1    ajainuary    ajainuary       6860 Thu Sep 27 23:46:29 2018 execute.c
+-rw-r--r--   1    ajainuary    ajainuary        692 Fri Oct  5 16:01:06 2018 tmp.txt
+-rw-r--r--   1    ajainuary    ajainuary       7717 Thu Sep 27 23:31:31 2018 prompt.c
+-rw-r--r--   1    ajainuary    ajainuary        700 Tue Sep  4 15:02:35 2018 user_details.c
+-rw-r--r--   1    ajainuary    ajainuary      27264 Fri Oct  5 16:00:54 2018 basic.o
+-rw-r--r--   1    ajainuary    ajainuary        575 Sun Sep 16 23:31:22 2018 redir.c
+-rw-r--r--   1    ajainuary    ajainuary        371 Sun Sep 16 00:20:21 2018 Makefile
+-rw-r--r--   1    ajainuary    ajainuary       1641 Thu Sep 27 23:08:36 2018 shell.h
+-rw-r--r--   1    ajainuary    ajainuary       1535 Tue Sep  4 15:02:35 2018 time.c
+-rw-r--r--   1    ajainuary    ajainuary       2977 Thu Sep 27 19:51:15 2018 basic.c
+-rw-r--r--   1    ajainuary    ajainuary      35336 Fri Oct  5 16:00:54 2018 execute.o
+-rwxr-xr-x   1    ajainuary    ajainuary      88088 Fri Oct  5 16:00:54 2018 shell
+-rw-r--r--   1    ajainuary    ajainuary      20040 Fri Oct  5 16:00:54 2018 time.o
+

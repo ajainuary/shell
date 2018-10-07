@@ -1,1 +1,0 @@
-user_details.o prompt.o ls.o a.out test.txt built_in.c a.txt ls.c built_in.o README.md execute.c basic2.c prompt.c user_details.c basic.o redir.c Makefile timer.c shell.h c.txt time.c basic.c execute.o shell b.txt time.o 
